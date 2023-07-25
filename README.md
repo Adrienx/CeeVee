@@ -87,7 +87,7 @@ App
 
 - MongoDB
 - Express
-- React (created with Create React App)
+- React
 - Node.js
 - Bootstrap
 - OpenAI's GPT-4
@@ -96,7 +96,7 @@ App
 
 - Support for PDF download format.
 - More advanced and specific tailoring instructions.
-- Utilize DAll-E-2 API to allow users to generate a career map based on their generated documents.
+- Utilize DALL-E-2 API to allow users to generate a career map based on their generated documents.
 - Ability for users to save multiple versions of their resumes and cover letters.
 
 ## Getting Started
