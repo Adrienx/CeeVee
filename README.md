@@ -6,8 +6,8 @@ CeeVee is an AI powered resume and cover letter tailor that is built using that 
 
 ## Proposed Features
 
-1. Users can create an account and authenticate to their own user account. This user account will store users' resumes, cover letters, job descriptions, and tailored resumes and cover letters. (CRUD)
-2. Users will be able to generate a tailored resume and cover letter based on their existing documents and a specific job description.
+1. Users can create an account and authenticate to their own user account. This user account will store users' resumes, cover letters, job descriptions, and new resumes and cover letters. (CRUD)
+2. Users will be able to generate a new resume and cover letter based on their existing documents and a specific job description.
 3. Users will be able to download the generated documents in word format.
 4. The generated documents will be formatted based on industry best practices for resumes and cover letters.
 
@@ -41,20 +41,20 @@ JobDescription
 | - description
 | - body
 
-TailoredResume
-| - tailoredResumeID
+NewResume
+| - newResumeID
 | - userID
-| - resumeID
 | - jobDescriptionID
 | - title
+| - description
 | - body
 
-TailoredCoverLetter
-| - tailoredCoverLetterID
+NewCoverLetter
+| - newCoverLetterID
 | - userID
-| - coverLetterID
 | - jobDescriptionID
 | - title
+| - description
 | - body
 
 ## Component Hierarchy Structure
@@ -74,20 +74,20 @@ App
 ├── CoverLetterInput
 ├── JobDescriptionInput
 ├── GenerateDocument
-│ ├── TailoredResume
-│ └── TailoredCoverLetter
+│ ├── NewResume
+│ └── NewCoverLetter
 └── Documents
 ├── ResumeList
 ├── CoverLetterList
 ├── JobDescriptionList
-├── TailoredResumeList
-└── TailoredCoverLetterList
+├── NewResumeList
+└── NewCoverLetterList
 
 ## Technologies
 
 - MongoDB
 - Express
-- React
+- React ()TBD
 - Node.js
 - Bootstrap
 - OpenAI's GPT-4
@@ -101,7 +101,7 @@ App
 
 ## Getting Started
 
-Visit our deployed site [here](TBD) and check out our Trello board [here](TBD).
+Visit our deployed site [here](TBD) and check out our Trello board [here](https://trello.com/b/uxtivY9B/ceevee).
 
 ## Run Locally
 
