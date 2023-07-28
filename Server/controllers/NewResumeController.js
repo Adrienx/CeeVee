@@ -17,8 +17,8 @@ const NewResumeController = {
         title,
         description,
         body,
-        jobDescription,
-        user,
+        jobDescriptionID: jobDescription,
+        userID: user,
       })
 
       await newResume.save()
