@@ -10,15 +10,14 @@ const JobDescriptionController = {
     }
   },
   create: async (req, res) => {
-    const { title, description, responsibilities, qualifications, user } =
-      req.body
+    const { title, description, body, userID } = req.body
 
     try {
       const newJobDescription = new JobDescription({
         title,
         description,
         body,
-        user,
+        userID,
       })
 
       await newJobDescription.save()

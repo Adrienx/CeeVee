@@ -10,14 +10,14 @@ const ResumeController = {
     }
   },
   create: async (req, res) => {
-    const { title, description, body, user } = req.body
+    const { title, description, body, userID } = req.body
 
     try {
       const newResume = new Resume({
         title,
         description,
         body,
-        user,
+        userID,
       })
 
       await newResume.save()
