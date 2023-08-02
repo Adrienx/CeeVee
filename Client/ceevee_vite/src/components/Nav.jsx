@@ -8,7 +8,7 @@ const CustomNav = () => {
         {" "}
         {/* Notice the change here to make container full-width */}
         <Navbar.Brand as={NavLink} exact to="/GenerateDocument">
-          <div className="animated-word">
+          <div className="animated-word fs-1">
             <div className="letter">C</div>
             <div className="letter">e</div>
             <div className="letter">e</div>
@@ -18,7 +18,7 @@ const CustomNav = () => {
           </div>
         </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
           <div className="ml-auto">
             {" "}
             {/* Wrapper div */}

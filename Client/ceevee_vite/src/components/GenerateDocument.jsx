@@ -13,8 +13,6 @@ import DataContext from "../data/DataContext"
 import { CopyToClipboard } from "react-copy-to-clipboard"
 
 const GenerateDocument = () => {
-  // Defining and initializing state variables
-
   const [resume, setResume] = useState("")
   const [jobDescription, setJobDescription] = useState("")
   const [resumeType, setResumeType] = useState("")
@@ -35,6 +33,7 @@ const GenerateDocument = () => {
   const [selectedJobDescriptionBody, setSelectedJobDescriptionBody] =
     useState("")
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // function to handle resume selection change
   const handleResumeSelectionChange = (e) => {
     const selectedResume = resumes[e.target.selectedIndex - 1] //gets the resume object at the selected index from the resumes array. The - 1 is needed because array indices start at 0, but selectedIndex starts at 1.
@@ -43,6 +42,7 @@ const GenerateDocument = () => {
     setSelectedResumeBody(selectedResume.body)
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // function to handle job description selection change
   const handleJobDescriptionSelectionChange = (e) => {
     const selectedJobDescription = jobDescriptions[e.target.selectedIndex - 1]
@@ -51,6 +51,7 @@ const GenerateDocument = () => {
     setSelectedJobDescriptionBody(selectedJobDescription.body)
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Handle copy to clipboard action
 
   const handleCopy = () => {
@@ -58,6 +59,7 @@ const GenerateDocument = () => {
     setTimeout(() => setIsCopied(false), 3000) // Reset after 3s
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Fetch resumes and job descriptions upon component's mount
 
   useEffect(() => {
@@ -65,6 +67,7 @@ const GenerateDocument = () => {
     fetchJobDescriptions()
   }, [])
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Fetch resumes from server
 
   const fetchResumes = async () => {
@@ -75,6 +78,8 @@ const GenerateDocument = () => {
       console.error(error)
     }
   }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Fetch job descriptions from server
 
   const fetchJobDescriptions = async () => {
@@ -86,6 +91,7 @@ const GenerateDocument = () => {
     }
   }
 
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
   // Generate a new tailored resume by making a POST request to the server
 
   const generateNewResume = async () => {
@@ -113,6 +119,7 @@ const GenerateDocument = () => {
     Original resume:
     ${resumeText}`
 
+    //////////////////////////////////////////////////////////////////////////////////////////////////////
     // Loading screen when fetching data
 
     try {

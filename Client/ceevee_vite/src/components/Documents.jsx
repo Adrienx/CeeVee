@@ -11,24 +11,24 @@ import {
 import axios from "axios"
 
 const Documents = () => {
-  const [docType, setDocType] = useState("resume") // Default docType set to "resume"
-  const [operation, setOperation] = useState(null)
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [body, setBody] = useState("")
-  const [loading, setLoading] = useState(false)
-  const [documentList, setDocumentList] = useState([])
-  const [selectedDocument, setSelectedDocument] = useState("")
+  // States for managing document properties and user interactions
+  const [docType, setDocType] = useState("resume") // Default document type
+  const [operation, setOperation] = useState(null) // Selected operation (create, update, delete)
+  const [title, setTitle] = useState("") // Document title
+  const [description, setDescription] = useState("") // Document description
+  const [body, setBody] = useState("") // Document body
+  const [loading, setLoading] = useState(false) // Loading state
+  const [documentList, setDocumentList] = useState([]) // List of documents
+  const [selectedDocument, setSelectedDocument] = useState("") // Selected document from the list
   const [actionTrigger, setActionTrigger] = useState(0) // State variable to trigger fetching of new data
 
-  const handleDocTypeChange = (event) => {
-    setDocType(event.target.value)
-  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Change handlers for form controls
+  const handleDocTypeChange = (event) => setDocType(event.target.value)
+  const handleOperationChange = (event) => setOperation(event.target.value)
 
-  const handleOperationChange = (event) => {
-    setOperation(event.target.value)
-  }
-
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Effect hook to fetch documents based on document type and action trigger
   useEffect(() => {
     const fetchDocuments = async () => {
       const endpoint = `http://localhost:3001/api/${docType}s`
@@ -42,7 +42,47 @@ const Documents = () => {
     }
 
     fetchDocuments()
-  }, [docType, actionTrigger]) // actionTrigger added to dependency array
+  }, [docType, actionTrigger]) // Depend on docType and actionTrigger
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Effect hook to reset fields when the operation is changed (create, update, delete)
+  useEffect(() => {
+    setSelectedDocument("") // Reset selected document
+    setTitle("") // Reset title
+    setDescription("") // Reset description
+    setBody("") // Reset body
+  }, [operation]) // Depend on the 'operation' state
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Function to handle creation of a document
+  const handleCreate = async () => {
+    setLoading(true)
+    const endpoint = `http://localhost:3001/api/${docType}s`
+    try {
+      const response = await axios.post(endpoint, {
+        title,
+        description,
+        body,
+        userID: "64c08b91e8bfd4c5a00ea0b0", // User ID hardcoded for now
+      })
+      if (response.status === 201) {
+        alert("Document created successfully!")
+        setTitle("")
+        setDescription("")
+        setBody("")
+      } else {
+        alert("Failed to create document")
+      }
+    } catch (error) {
+      console.error(error)
+      alert("Failed to create document")
+    }
+    setLoading(false)
+    setActionTrigger(actionTrigger + 1) // Trigger fetching of new data
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Function to handle updating of a selected document
 
   const handleUpdate = async () => {
     setLoading(true)
@@ -58,6 +98,7 @@ const Documents = () => {
         setTitle("")
         setDescription("")
         setBody("")
+        setSelectedDocument("") // Reset the "Select document by Title" option
       } else {
         alert("Failed to update document")
       }
@@ -68,6 +109,9 @@ const Documents = () => {
     setLoading(false)
     setActionTrigger(actionTrigger + 1) // Trigger fetching of new data
   }
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Function to handle deletion of a selected document
 
   const handleDelete = async () => {
     setLoading(true)
@@ -90,33 +134,8 @@ const Documents = () => {
     setActionTrigger(actionTrigger + 1) // Trigger fetching of new data
   }
 
-  const handleCreate = async () => {
-    setLoading(true)
-
-    const endpoint = `http://localhost:3001/api/${docType}s`
-    try {
-      const response = await axios.post(endpoint, {
-        title,
-        description,
-        body,
-        // User ID hardcode for now
-        userID: "64c08b91e8bfd4c5a00ea0b0",
-      })
-      if (response.status === 201) {
-        alert("Document created successfully!")
-        setTitle("")
-        setDescription("")
-        setBody("")
-      } else {
-        alert("Failed to create document")
-      }
-    } catch (error) {
-      console.error(error)
-      alert("Failed to create document")
-    }
-    setLoading(false)
-    setActionTrigger(actionTrigger + 1) // Trigger fetching of new data
-  }
+  //////////////////////////////////////////////////////////////////////////////////////////////////////
+  // Function to fetch details of a selected document by ID
 
   const fetchDocumentDetails = async (id) => {
     const endpoint = `http://localhost:3001/api/${docType}s/${id}`
@@ -145,7 +164,9 @@ const Documents = () => {
       {/* Row for Document Type Selection */}
       <Row className="mt-4 mb-4">
         <Col>
-          <Form.Label>Select document type to manage</Form.Label>
+          <Form.Label className="fs-5">
+            Select document type to manage
+          </Form.Label>
           <Card>
             <Card.Body>
               {/* Radio buttons for selecting the document type */}
@@ -169,7 +190,7 @@ const Documents = () => {
           </Card>
         </Col>
         <Col>
-          <Form.Label>Select operation to perform</Form.Label>
+          <Form.Label className="fs-5">Select operation to perform</Form.Label>
           <Card>
             <Card.Body>
               {/* Dropdown for Operation Selection */}
