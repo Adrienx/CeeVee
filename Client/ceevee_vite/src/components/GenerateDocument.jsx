@@ -35,6 +35,7 @@ const GenerateDocument = () => {
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // function to handle resume selection change
+
   const handleResumeSelectionChange = (e) => {
     const selectedResume = resumes[e.target.selectedIndex - 1] //gets the resume object at the selected index from the resumes array. The - 1 is needed because array indices start at 0, but selectedIndex starts at 1.
     setSelectedResume(selectedResume)
@@ -44,6 +45,7 @@ const GenerateDocument = () => {
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////
   // function to handle job description selection change
+
   const handleJobDescriptionSelectionChange = (e) => {
     const selectedJobDescription = jobDescriptions[e.target.selectedIndex - 1]
     setSelectedJobDescription(selectedJobDescription)
@@ -110,14 +112,30 @@ const GenerateDocument = () => {
       jobDescriptionText = jobDescription
     }
 
-    const message = `As an AI, your task is to help optimize a resume for a specific job application. 
-    You have two key inputs: the existing resume and a job description.
+    const userMessage = `User: I need to create a customized cover letter and resume for the following job description and resume. Can you help me with this?
 
-    Job description:
-    ${jobDescriptionText}
+Job description:
+${jobDescriptionText}
 
-    Original resume:
-    ${resumeText}`
+Original resume:
+${resumeText}
+
+The cover letter should adhere to the following guidelines:
+- Objective: Customize based on job requirements and resume, ensuring authenticity.
+- Customization Focus: Use only accomplishments and skills from the resume, emphasizing technical tools, soft skills, cross-functional management, problem-solving skills, reflecting interest in the company's mission/values.
+- Tone and Style: Maintain a professional, engaging tone, express enthusiasm, ensure uniqueness.
+- AI Recognition Prevention: Avoid detection, add human touch.
+- Understandability: Simple language, active voice, clear structure.
+- Company-Specific Interest: Investigate company mission/values/accomplishments, align with applicant's background, show interest.
+- Accuracy: Include only experiences and skills in the resume, don't invent or assume anything.
+
+Please review the document for accuracy before submitting.`
+
+    const assistantMessage = `Assistant: Certainly! Based on the provided guidelines, I'll craft a tailored cover letter that aligns with the job requirements, the candidate's resume, and all the other criteria you've mentioned. Here's the draft of the cover letter: `
+
+    const message = `${userMessage}\n\n${assistantMessage}`
+
+    // Pass the message and other parameters to the API call
 
     //////////////////////////////////////////////////////////////////////////////////////////////////////
     // Loading screen when fetching data
@@ -317,18 +335,29 @@ const GenerateDocument = () => {
       </Row>
       <div className="text-center">
         <Button onClick={generateNewResume} className="mb-4">
-          Generate Tailored Resume
+          Generate Tailored Cover Letter
         </Button>
       </div>
       {result && (
-        <Card className="mb-4">
+        <Card
+          className="mb-4"
+          style={{
+            backgroundColor: "rgba(255, 255, 255, 0.7)", // Adding some transparency to the cards
+          }}
+        >
           <Card.Body>
-            <Card.Title>Generated Resume</Card.Title>
+            <Card.Title>Generated Cover Letter</Card.Title>
             <Form.Control as="textarea" readOnly rows={30} value={result} />
             <CopyToClipboard text={result} onCopy={handleCopy}>
-              <Button className="mt-4">
-                {isCopied ? "Copied!" : "Copy to clipboard"}
-              </Button>
+              <div className="text-center mt-4">
+                <Button>{isCopied ? "Copied!" : "Copy to clipboard"}</Button>
+                <Button
+                  onClick={generateNewResume}
+                  style={{ marginLeft: "10px" }}
+                >
+                  Regenerate Cover Letter
+                </Button>
+              </div>
             </CopyToClipboard>
           </Card.Body>
         </Card>
