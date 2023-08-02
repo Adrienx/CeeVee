@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import {
   Card,
   Button,
@@ -17,6 +17,9 @@ const Documents = () => {
   const [description, setDescription] = useState("")
   const [body, setBody] = useState("")
   const [loading, setLoading] = useState(false)
+  const [documentList, setDocumentList] = useState([])
+  const [selectedDocument, setSelectedDocument] = useState("")
+  const [actionTrigger, setActionTrigger] = useState(0) // State variable to trigger fetching of new data
 
   const handleDocTypeChange = (event) => {
     setDocType(event.target.value)
@@ -24,6 +27,67 @@ const Documents = () => {
 
   const handleOperationChange = (event) => {
     setOperation(event.target.value)
+  }
+
+  useEffect(() => {
+    const fetchDocuments = async () => {
+      const endpoint = `http://localhost:3001/api/${docType}s`
+      try {
+        const response = await axios.get(endpoint)
+        setDocumentList(response.data)
+      } catch (error) {
+        console.error(error)
+        alert("Failed to fetch documents")
+      }
+    }
+
+    fetchDocuments()
+  }, [docType, actionTrigger]) // actionTrigger added to dependency array
+
+  const handleUpdate = async () => {
+    setLoading(true)
+    const endpoint = `http://localhost:3001/api/${docType}s/${selectedDocument}`
+    try {
+      const response = await axios.put(endpoint, {
+        title,
+        description,
+        body,
+      })
+      if (response.status === 200) {
+        alert("Document updated successfully!")
+        setTitle("")
+        setDescription("")
+        setBody("")
+      } else {
+        alert("Failed to update document")
+      }
+    } catch (error) {
+      console.error(error)
+      alert("Failed to update document")
+    }
+    setLoading(false)
+    setActionTrigger(actionTrigger + 1) // Trigger fetching of new data
+  }
+
+  const handleDelete = async () => {
+    setLoading(true)
+    const endpoint = `http://localhost:3001/api/${docType}s/${selectedDocument}`
+    try {
+      const response = await axios.delete(endpoint)
+      if (response.status === 200) {
+        alert("Document deleted successfully!")
+        setTitle("")
+        setDescription("")
+        setBody("")
+      } else {
+        alert("Failed to delete document")
+      }
+    } catch (error) {
+      console.error(error)
+      alert("Failed to delete document")
+    }
+    setLoading(false)
+    setActionTrigger(actionTrigger + 1) // Trigger fetching of new data
   }
 
   const handleCreate = async () => {
@@ -51,49 +115,93 @@ const Documents = () => {
       alert("Failed to create document")
     }
     setLoading(false)
+    setActionTrigger(actionTrigger + 1) // Trigger fetching of new data
+  }
+
+  const fetchDocumentDetails = async (id) => {
+    const endpoint = `http://localhost:3001/api/${docType}s/${id}`
+    try {
+      const response = await axios.get(endpoint)
+      const { title, description, body } = response.data
+      setTitle(title)
+      setDescription(description)
+      setBody(body)
+    } catch (error) {
+      console.error(error)
+      alert("Failed to fetch document details")
+    }
   }
 
   return (
-    <Container>
-      <Row>
+    <Container
+      className="mt-5"
+      style={{
+        minWidth: "33%",
+        padding: "1em",
+        border: "1px solid #CCC",
+        backgroundColor: "rgba(255, 255, 255, 0.7)",
+      }}
+    >
+      {/* Row for Document Type Selection */}
+      <Row className="mt-4 mb-4">
         <Col>
-          <Form.Check
-            type="radio"
-            label="Resume"
-            name="docType"
-            value="resume"
-            checked={docType === "resume"}
-            onChange={handleDocTypeChange}
-          />
-          <Form.Check
-            type="radio"
-            label="Job Description"
-            name="docType"
-            value="jobDescription"
-            checked={docType === "jobDescription"}
-            onChange={handleDocTypeChange}
-          />
+          <Form.Label>Select document type to manage</Form.Label>
+          <Card>
+            <Card.Body>
+              {/* Radio buttons for selecting the document type */}
+              <Form.Check
+                type="radio"
+                label="Resume"
+                name="docType"
+                value="resume"
+                checked={docType === "resume"}
+                onChange={handleDocTypeChange} // Triggers when radio button state changes
+              />
+              <Form.Check
+                type="radio"
+                label="Job Description"
+                name="docType"
+                value="jobDescription"
+                checked={docType === "jobDescription"}
+                onChange={handleDocTypeChange} // Triggers when radio button state changes
+              />
+            </Card.Body>
+          </Card>
         </Col>
         <Col>
-          <Form.Select onChange={handleOperationChange}>
-            <option value="">Select an operation</option>
-            <option value="create">Create New</option>
-            <option value="update">Update Existing</option>
-            <option value="delete">Delete Existing Document</option>
-          </Form.Select>
+          <Form.Label>Select operation to perform</Form.Label>
+          <Card>
+            <Card.Body>
+              {/* Dropdown for Operation Selection */}
+              <Form.Select
+                onChange={handleOperationChange}
+                style={{ width: "100%" }}
+              >
+                <option value="">
+                  Select an operation to perform on a document
+                </option>
+                <option value="create">Create </option>
+                <option value="update">Update </option>
+                <option value="delete">Delete </option>
+              </Form.Select>
+            </Card.Body>
+          </Card>
         </Col>
       </Row>
+
+      {/* Conditional Render for Create Operation */}
       {operation === "create" && (
-        <Row className="mt-4">
+        <Row className="mt-4 mb-4">
           <Col>
             <Card>
               <Card.Body>
+                {/* Form for new document creation */}
                 <Form.Group className="mb-3">
                   <Form.Label>Title</Form.Label>
                   <Form.Control
                     type="text"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) => setTitle(e.target.value)} // Update title state
                     placeholder="Enter a title"
                   />
                 </Form.Group>
@@ -102,7 +210,69 @@ const Documents = () => {
                   <Form.Control
                     type="text"
                     value={description}
-                    onChange={(e) => setDescription(e.target.value)}
+                    onChange={(e) => setDescription(e.target.value)} // Update description state
+                    placeholder="Enter a description"
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Body</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={20}
+                    value={body}
+                    onChange={(e) => setBody(e.target.value)} // Update body state
+                    placeholder="Enter the body"
+                    style={{ width: "100%", minHeight: "200px" }}
+                  />
+                </Form.Group>
+                {/* Save Button with Loading Indicator */}
+                <Button onClick={handleCreate} disabled={loading}>
+                  {loading ? <Spinner animation="border" size="sm" /> : "Save"}
+                </Button>
+              </Card.Body>
+            </Card>
+          </Col>
+        </Row>
+      )}
+
+      {/* Conditional Render for Update Operation */}
+      {operation === "update" && (
+        <Row className="mt-4">
+          <Col>
+            <Card>
+              <Card.Body>
+                {/* Form for document update */}
+                <Form.Label>Select document by Title</Form.Label>
+                <Form.Select
+                  onChange={(e) => {
+                    setSelectedDocument(e.target.value)
+                    fetchDocumentDetails(e.target.value) // Fetch document details on select
+                  }}
+                  value={selectedDocument}
+                >
+                  <option value="">Choose from the list</option>
+                  {/* Dynamically populate dropdown with document titles */}
+                  {documentList.map((doc) => (
+                    <option key={doc._id} value={doc._id}>
+                      {doc.title}
+                    </option>
+                  ))}
+                </Form.Select>
+                <Form.Group className="mb-3">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={title}
+                    onChange={(e) => setTitle(e.target.value)} // Update title state
+                    placeholder="Enter a title"
+                  />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control
+                    type="text"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)} // Update description state
                     placeholder="Enter a description"
                   />
                 </Form.Group>
@@ -112,32 +282,69 @@ const Documents = () => {
                     as="textarea"
                     rows={10}
                     value={body}
-                    onChange={(e) => setBody(e.target.value)}
+                    onChange={(e) => setBody(e.target.value)} // Update body state
                     placeholder="Enter the body"
                   />
                 </Form.Group>
-                <Button onClick={handleCreate} disabled={loading}>
-                  {loading ? <Spinner animation="border" size="sm" /> : "Save"}
+                {/* Update Button with Loading Indicator */}
+                <Button onClick={handleUpdate} disabled={loading}>
+                  {loading ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "Update"
+                  )}
                 </Button>
               </Card.Body>
             </Card>
           </Col>
         </Row>
       )}
-      {operation === "update" && (
-        <Row className="mt-4">
-          <Col>
-            <Card>
-              <Card.Body>Update functionality goes here...</Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      )}
+
+      {/* Conditional Render for Delete Operation */}
       {operation === "delete" && (
         <Row className="mt-4">
           <Col>
             <Card>
-              <Card.Body>Delete functionality goes here...</Card.Body>
+              <Card.Body>
+                {/* Form for document deletion */}
+                <Form.Label>Select document by Title</Form.Label>
+                <Form.Select
+                  onChange={(e) => {
+                    setSelectedDocument(e.target.value)
+                    fetchDocumentDetails(e.target.value) // Fetch document details on select
+                  }}
+                  value={selectedDocument}
+                >
+                  <option value="">Choose from the list</option>
+                  {/* Populate dropdown with document titles */}
+                  {documentList.map((doc) => (
+                    <option key={doc._id} value={doc._id}>
+                      {doc.title}
+                    </option>
+                  ))}
+                </Form.Select>
+                {/* Readonly details of the selected document */}
+                <Form.Group className="mb-3">
+                  <Form.Label>Title</Form.Label>
+                  <Form.Control type="text" value={title} readOnly />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Description</Form.Label>
+                  <Form.Control type="text" value={description} readOnly />
+                </Form.Group>
+                <Form.Group className="mb-3">
+                  <Form.Label>Body</Form.Label>
+                  <Form.Control as="textarea" rows={10} value={body} readOnly />
+                </Form.Group>
+                {/* Delete Button with Loading Indicator */}
+                <Button onClick={handleDelete} disabled={loading}>
+                  {loading ? (
+                    <Spinner animation="border" size="sm" />
+                  ) : (
+                    "Delete"
+                  )}
+                </Button>
+              </Card.Body>
             </Card>
           </Col>
         </Row>

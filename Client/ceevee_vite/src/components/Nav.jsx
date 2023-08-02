@@ -1,24 +1,48 @@
 import { NavLink } from "react-router-dom"
+import { Navbar, Nav, Container } from "react-bootstrap"
 
-const Nav = () => {
+const CustomNav = () => {
   return (
-    <nav>
-      <ul>
-        <li>
-          <NavLink to="/">Home</NavLink>
-        </li>
-        <li>
-          <NavLink to="/GenerateDocument"> Generate Documents</NavLink>
-        </li>
-        <li>
-          <NavLink to="/Documents"> Documents </NavLink>
-        </li>
-        <li>
-          <NavLink to="/UserProfile"> User Profile</NavLink>
-        </li>
-      </ul>
-    </nav>
+    <Navbar bg="dark" variant="dark" expand="lg">
+      <Container fluid>
+        {" "}
+        {/* Notice the change here to make container full-width */}
+        <Navbar.Brand as={NavLink} exact to="/GenerateDocument">
+          <div className="animated-word">
+            <div className="letter">C</div>
+            <div className="letter">e</div>
+            <div className="letter">e</div>
+            <div className="letter">V</div>
+            <div className="letter">e</div>
+            <div className="letter">e</div>
+          </div>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <div className="ml-auto">
+            {" "}
+            {/* Wrapper div */}
+            <Nav>
+              <Nav.Link
+                as={NavLink}
+                to="/Documents"
+                activeStyle={{ fontWeight: "bold" }}
+              >
+                Manage Documents
+              </Nav.Link>
+              <Nav.Link
+                as={NavLink}
+                to="/UserProfile"
+                activeStyle={{ fontWeight: "bold" }}
+              >
+                User Profile
+              </Nav.Link>
+            </Nav>
+          </div>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   )
 }
 
-export default Nav
+export default CustomNav

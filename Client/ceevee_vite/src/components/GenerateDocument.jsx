@@ -142,10 +142,26 @@ const GenerateDocument = () => {
   }
 
   return (
-    <Container>
+    <Container
+      className="mt-5"
+      style={{
+        minHeight: "100vh", // Ensuring the container takes the full viewport height
+        minWidth: "33%",
+        padding: "1em",
+        border: "1px solid #CCC",
+        backgroundImage: `url("https://i.imgur.com/2m3qGcg.png")`,
+        backgroundSize: "cover", // To cover the entire container
+        backgroundRepeat: "no-repeat", // To prevent the image from repeating
+      }}
+    >
       <Row>
         <Col>
-          <Card className="mb-4">
+          <Card
+            className="mb-4"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.7)", // Adding some transparency to the cards
+            }}
+          >
             <Card.Body>
               <Card.Title>Resume</Card.Title>
               <Form>
@@ -215,7 +231,12 @@ const GenerateDocument = () => {
           </Card>
         </Col>
         <Col>
-          <Card className="mb-4">
+          <Card
+            className="mb-4"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.7)", // Adding some transparency to the cards
+            }}
+          >
             <Card.Body>
               <Card.Title>Job Description</Card.Title>
               <Form>
@@ -287,24 +308,24 @@ const GenerateDocument = () => {
           </Card>
         </Col>
       </Row>
-      <Button onClick={generateNewResume} className="mb-4">
-        Generate Tailored Resume
-      </Button>
-      <Card className="mb-4">
-        <Card.Body>
-          <Card.Title>Generated Resume</Card.Title>
-          {result && (
-            <>
-              <Form.Control as="textarea" readOnly rows={30} value={result} />
-              <CopyToClipboard text={result} onCopy={handleCopy}>
-                <Button className="mt-4">
-                  {isCopied ? "Copied!" : "Copy to clipboard"}
-                </Button>
-              </CopyToClipboard>
-            </>
-          )}
-        </Card.Body>
-      </Card>
+      <div className="text-center">
+        <Button onClick={generateNewResume} className="mb-4">
+          Generate Tailored Resume
+        </Button>
+      </div>
+      {result && (
+        <Card className="mb-4">
+          <Card.Body>
+            <Card.Title>Generated Resume</Card.Title>
+            <Form.Control as="textarea" readOnly rows={30} value={result} />
+            <CopyToClipboard text={result} onCopy={handleCopy}>
+              <Button className="mt-4">
+                {isCopied ? "Copied!" : "Copy to clipboard"}
+              </Button>
+            </CopyToClipboard>
+          </Card.Body>
+        </Card>
+      )}
     </Container>
   )
 }
